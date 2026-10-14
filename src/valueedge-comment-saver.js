@@ -12,6 +12,9 @@
 
 	// Define unique localStorage key name
 
+	// Last picked improvement template (global, not per ticket)
+	const TEMPLATE_KEY = `valueedge_improve_template`;
+
 	let DRAFT_KEY = `valueedge_comment_draft`;
 	let TIMESTAMP_KEY = `valueedge_comment_draft_timestamp`;
 
@@ -417,10 +420,17 @@
 				});
 			}
 			templateSelect.disabled = false;
+
+			// Preselect the previously picked template, if it still exists
+			const savedTemplate = localStorage.getItem(TEMPLATE_KEY);
+			if (savedTemplate && Array.from(templateSelect.options).some((o) => o.value === savedTemplate)) {
+				templateSelect.value = savedTemplate;
+			}
 			syncRefreshBtn();
 
-			// Auto-trigger when the user changes the template
+			// Persist the pick and auto-trigger when the user changes the template
 			templateSelect.addEventListener("change", () => {
+				localStorage.setItem(TEMPLATE_KEY, templateSelect.value);
 				if (!isPaneEmpty(originalPane)) runImprove();
 			});
 
